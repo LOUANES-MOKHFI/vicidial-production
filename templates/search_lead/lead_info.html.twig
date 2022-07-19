@@ -1,0 +1,104 @@
+{% extends 'master.html.twig' %}
+
+{% block title %} serach for a lead!{% endblock %}
+{% block stylesheets %} 
+
+
+{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+
+<div class="pageheader hidden-xs">
+    <h3><i class="fa fa-home"></i> Lead search </h3>
+    <div class="breadcrumb-wrapper">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li> <a href="#"> Home </a> </li>
+            <li class="active"> Lead search </li>
+        </ol>
+    </div>
+    <div class="example-wrapper">
+        <form method="get" action="{{path('searchForLead')}}">
+            <div class="row">
+                <div class="col-md-8">
+                    
+                    <select class="form-control" name="leadStatus" required>
+                            <option selected> Choise a Lead </option>
+                        {% for statu in status %}
+                            <option value="{{ statu.status }}"> {{ statu.status }} </option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-info">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% if lists is defined %}
+<div id="page-content">
+   <div class="row">
+        <div class="col-md-12"> 
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Lead search: SALE</h3>
+                </div>
+                <div class="panel-body">
+                    <table id="demo-dt-basic" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>LEAD ID </th>
+                                <th>STATUS</th>
+                                <th class="min-tablet">VENDOR ID</th>
+                                <th class="min-tablet">LAST AGENT</th>
+                                <th class="min-desktop">LIST ID</th>
+                                <th class="min-desktop">PHONE</th>
+                                <th class="min-desktop">NAME</th>
+                                <th class="min-desktop">CITY</th>
+                                <th class="min-desktop">SECURITY</th>
+                                <th class="min-desktop">LAST CALL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% for list in lists %}
+                        
+                                <tr>
+                                    <td><a href="{{path('lead_informations',{'leadId':list.LeadId})}}">{{ list.LeadId }}</a></td>
+                                    <td>{{ list.Status }}</td>
+                                    <td>{{ list.VendorLeadCode }}</td>
+                                    <td>{{ list.User }}</td>
+                                    <td>{{ list.ListId }}</td>
+                                    <td>{{ list.PhoneNumber }}</td>
+                                    <td>{{ list.FirstName }}</td>
+                                    <td>{{ list.City }}</td>
+                                    <td>{{ list.SecurityPhrase }}</td>
+                                    <td>{{ list.LastLocalCallTime }}</td>
+                                    
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<br>
+<br>
+<br>
+<br>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

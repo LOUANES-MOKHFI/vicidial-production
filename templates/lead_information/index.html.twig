@@ -1,0 +1,125 @@
+{% extends 'master.html.twig' %}
+
+{% block title %} Lead information!{% endblock %}
+{% block stylesheets %} 
+
+<link href="assets/admin/plugins/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet">
+<link href="assets/admin/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { max-width: 1000px; width: 100%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    .span {
+        color:blue;
+    }
+</style>
+
+
+<div class="pageheader hidden-xs">
+    <h3><i class="fa fa-home"></i> Lead informations : {{list.FirstName}} - {{list.PhoneNumber}}</h3>
+    <div class="breadcrumb-wrapper">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li> <a href="#"> Home </a> </li>
+            <li class="active"> Lead informations </li>
+        </ol>
+    </div>
+    <div class="example-wrapper container">
+        {% if list is defined %}
+        <div class="row">
+
+            <div class="col-md-3"><h4>Lead ID: <span class="span">{{ list.LeadId}}</span></h4></div>
+            <div class="col-md-3"><h4>List ID: <span class="span">{{ list.ListId}}</span></h4></div>
+            <div class="col-md-3"><h4>User: <span class="span">{{ list.User}}</span></h4></div>
+            <div class="col-md-3"><h4>Last Call: <span class="span">{{ list.LastLocalCallTime}}</span></h4></div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% if record is defined %}
+<div id="page-content">
+   <div class="row">
+        <div class="col-md-12"> 
+            <div class="panel">
+                    {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-errors">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                <div class="panel-heading">
+                    <h3 class="panel-title">RECORDINGS FOR THIS LEAD: 
+                        <span class="bold">{{ record.leadId }}</span>
+                    </h3>
+                </div>
+                <div class="panel-body table-responsive">
+                    <table id="demo-dt-basic" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="min-desktop">LEAD </th>
+                                <th class="min-desktop">DATE/TIME</th>
+                                <th class="min-tablet">SECONDS</th>
+                                <th class="min-tablet">RECID</th>
+                                <th>FILENAME</th>
+                                <th class="min-desktop">LOCATION</th>
+                                <th class="min-desktop">TSR</th>
+                                <th class="min-desktop">VOICE</th>
+                                <th class="min-desktop">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ record.leadId }}</td>
+                                <td>{{ record.StartTime }}</td>
+                                <td>{{ record.LengthInSec }}</td>
+                                <td>{{ record.RecordingId }}</td>
+                                <td>{{ record.Filename }}</td>
+                                <td >
+                                    <a href="{{ record.Location }}" class="span">{{ record.Location }}</a>
+                                </td>
+                                <td>{{ record.User }}</td>
+                                <td>
+                                    <audio controls>
+                                      <source src="{{ record.Location }}" type="audio/ogg">
+                                    </audio>
+                                </td>
+                                <td>
+                                    <form method="post" action="{{path('uploadFile')}}">
+                                        <input type="hidden" name="token" value="{{ csrf_token('upload') }}" />
+                                        <input type="hidden" name="leadId" value="{{ list.LeadId }}">
+                                        <input type="hidden" name="listId" value="{{ list.ListId }}">
+                                        <input type="hidden" name="user" value="{{ list.User }}">
+                                        <input type="hidden" name="lastCall" value="{{ list.LastLocalCallTime }}">
+                                        <input type="hidden" name="userName" value="{{ list.FirstName }}">
+                                        <input type="hidden" name="phoneNumber" value="{{ list.PhoneNumber }}">
+                                        <input type="hidden" name="file" value="{{ record.Location }}">
+                                        <input type="hidden" name="filename" value="{{ record.Filename }}">
+                                        <button class="btn btn-primary" type="submit">Uploade</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<script src="{{asset('assets/admin/js/jquery-2.1.1.min.js')}}"></script>
+<script src="{{asset('assets/admin/plugins/datatables/media/js/jquery.dataTables.js')}}"></script>
+<script src="{{asset('assets/admin/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
+<script src="{{asset('assets/admin/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js')}}"></script>
+ <script src="{{asset('assets/admin/js/demo/tables-datatables.js')}}"></script>
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

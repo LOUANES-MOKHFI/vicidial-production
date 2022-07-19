@@ -1,0 +1,79 @@
+{% extends 'master.html.twig' %}
+
+{% block title %} Lead information!{% endblock %}
+{% block stylesheets %} 
+
+
+{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+
+<div class="pageheader hidden-xs">
+    <h3><i class="fa fa-home"></i> Lead search </h3>
+    <div class="breadcrumb-wrapper">
+        <span class="label">You are here:</span>
+        <ol class="breadcrumb">
+            <li> <a href="#"> Home </a> </li>
+            <li class="active"> Lead search </li>
+        </ol>
+    </div>
+    <div class="example-wrapper">
+        
+    </div>
+</div>
+{% if record is defined %}
+<div id="page-content">
+   <div class="row">
+        <div class="col-md-12"> 
+            <div class="panel">
+                <div class="panel-heading">
+                    <h3 class="panel-title">RECORDINGS FOR THIS LEAD: <span class="bold">SALE</span></h3>
+                </div>
+                <div class="panel-body">
+                    <table id="demo-dt-basic" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>LEAD </th>
+                                <th>DATE/TIME</th>
+                                <th class="min-tablet">SECONDS</th>
+                                <th class="min-tablet">RECID</th>
+                                <th class="min-desktop">FILENAME</th>
+                                <th class="min-desktop">LOCATION</th>
+                                <th class="min-desktop">TSR</th>
+                                <th class="min-desktop">VOICE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        
+                                <tr>
+                                    <td>{{ record.leadId }}</td>
+                                    <td>{{ record.StartTime }}</td>
+                                    <td>{{ record.LengthInSec }}</td>
+                                    <td>{{ record.RecordingId }}</td>
+                                    <td>{{ record.Filename }}</td>
+                                    <td>{{ record.Location }}</td>
+                                    <td>{{ record.User }}</td>
+                                    <td></td>
+                                </tr>
+                           
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'master.html.twig'%}
+
+{% block title %} formulaire {% endblock %}
+{% block stylesheets %}
+ 
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-12">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-errors">
+                {{ message }}
+            </div>
+        {% endfor %}
+        <div class="panel">
+            <div class="panel-heading">
+                <div class="panel-control">
+                    <button class="btn btn-default" data-click="panel-expand"><i class="fa fa-expand"></i></button>
+                    <button class="btn btn-default" data-click="panel-reload"><i class="fa fa-refresh"></i></button>
+                    <button class="btn btn-default" data-click="panel-collapse"><i class="fa fa-chevron-down"></i></button>
+                    <button class="btn btn-default" data-dismiss="panel"><i class="fa fa-times"></i></button>
+                </div>
+                <h3 class="panel-title">Transferer un contenu vers google drive</h3>
+            </div>
+            <!--No Label Form-->
+            <!--===================================================-->
+            <form action="{{path('postForm')}}" method="post" enctype='multipart/form-data' class="form-horizontal">
+                <input type="hidden" name="token" value="{{ csrf_token('upload') }}" />
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6 mar-btm">
+                            <input  type="text" class="form-control" required id="fname" placeholder="Nom" name="fname">
+                        </div>
+                        <div class="col-md-6 mar-btm">
+                            <input type="text" class="form-control" required id="lname" placeholder="Prénom" name="lname">
+                        </div>
+                        <div class="col-md-12 mar-btm">
+                            <input type="file" class="form-control" required id="file" placeholder="" name="file">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer text-right">
+                    <button class="btn btn-info">Envoyer</button>
+                </div>
+            </form>
+            <!--===================================================-->
+            <!--End No Label Form-->
+        </div>
+    </div>
+</div>          
+
+{% endblock %}
+{% block script %}
+{% endblock %}
