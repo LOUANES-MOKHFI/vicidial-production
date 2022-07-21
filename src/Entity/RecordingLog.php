@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass=RecordingLogRepository::class)
+ * @ORM\Table(name="`recording_log`")
  */
 class RecordingLog
 {
@@ -16,37 +17,37 @@ class RecordingLog
      * @ORM\Column(type="integer")
      */
 
-    private $recording_id;
+    public $recording_id;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $leadId;
+    public $leadId;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $start_time;
+    public $start_time;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $length_in_sec;
+    public $length_in_sec;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $filename;
+    public $filename;
 
     /**
      * @ORM\Column(type="text")
      */
-    private $location;
+    public $location;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $user;
+    public $user;
 
     public function getId(): ?int
     {

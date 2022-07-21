@@ -38,7 +38,7 @@
         {% endif %}
     </div>
 </div>
-{% if record is defined %}
+{% if records is defined %}
 <div id="page-content">
    <div class="row">
         <div class="col-md-12"> 
@@ -55,7 +55,7 @@
                     {% endfor %}
                 <div class="panel-heading">
                     <h3 class="panel-title">RECORDINGS FOR THIS LEAD: 
-                        <span class="bold">{{ record.leadId }}</span>
+                        <span class="bold">{{ list.leadId }}</span>
                     </h3>
                 </div>
                 <div class="panel-body table-responsive">
@@ -74,6 +74,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {% for record in records %}
                             <tr>
                                 <td>{{ record.leadId }}</td>
                                 <td>{{ record.StartTime }}</td>
@@ -104,6 +105,7 @@
                                     </form>
                                 </td>
                             </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

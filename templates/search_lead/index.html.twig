@@ -5,7 +5,8 @@
 <link href="assets/admin/plugins/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet">
 <link href="assets/admin/plugins/datatables/extensions/Responsive/css/dataTables.responsive.css" rel="stylesheet">
 <style>
-    
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
     .span {
         color:blue;
     }
@@ -13,10 +14,7 @@
 {% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+
 
 
 <div class="pageheader hidden-xs">
@@ -58,14 +56,38 @@
         </form>
     </div>
 </div>
-{% if lists is defined %}
-{% if lists|length > 0 %}
+
+<!-- {% if lists is not defined %}
+<div class="alert alert-danger">
+    <div class="container">
+        <h4 class=" text-center">
+            Aucune Liste exist
+        </h4>
+    </div>
+</div>
+{% else %} -->
 <div id="page-content">
    <div class="row">
         <div class="col-md-12"> 
             <div class="panel">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Lead search: {{leadStatus}}</h3>
+                {% for message in app.flashes('success') %}
+                        <div class="alert alert-success">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {% for message in app.flashes('error') %}
+                        <div class="alert alert-errors">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                <div class="panel-heading d-flex justify-content-between">
+                    <div class="text-left">
+                        <h3 class="panel-title">Lead Search:<span class="text-info text-bold"> {{leadStatus}}</span></h3>
+                    </div>
+                    <div class="text-right">
+                        <h3 class="panel-title">Count List: <span class="text-info text-bold">{{ lists|length }}</span></h3>
+                    </div>
+                    
                 </div>
                 <div class="panel-body table-responsive">
                     <table id="demo-dt-basic" class="table table-striped table-bordered">
@@ -86,11 +108,12 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                           {% set leadsId = [] %}
                             {% for list in lists %}
-                        
+                            
                                 <tr>
                                     <td><a class="span" href="{{path('app_lead_information',{'leadId':list.LeadId})}}">{{ list.LeadId }}</a></td>
+                                    {% set leadsId = leadsId|merge([1,2]) %}
                                     <td>{{ list.Status }}</td>
                                     <td>{{ list.VendorLeadCode != 0 ? list.VendorLeadCode : '' }}</td>
                                     <td>{{ list.User }}</td>
@@ -105,6 +128,15 @@
                                     
                                 </tr>
                             {% endfor %}
+                            
+                            <div class="col-md-3">
+                                <form method="post" action="{{path('uploadAllFile')}}">
+                                   {% for list in lists %}
+                                   <input type="hidden" name="leadids[]" value="{{list.LeadId}}">
+                                   {% endfor %}
+                                    <button type="submit" class="btn btn-info">All Upload</button>
+                                </form>
+                            </div>
                         </tbody>
                     </table>
                 </div>
@@ -112,18 +144,11 @@
         </div>
     </div>
 </div>
+<!-- {% endif %} -->
 
 
-{% endif %}
-{% else %}
-<div class="alert alert-danger">
-    <div class="container">
-        <h5 class="text-red text-center">
-            Aucune Liste exist
-        </h5>
-    </div>
-</div>
-{% endif %}
+
+
 <br>
 
 <br>

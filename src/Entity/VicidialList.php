@@ -17,62 +17,62 @@ class VicidialList
      * * @ORM\Id
      * @ORM\Column(type="integer")
      */
-    private $lead_id;
+    public $lead_id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $status;
+    public $status;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $vendor_lead_code;
+    public $vendor_lead_code;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $user;
+    public $user;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $list_id;
+    public $list_id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $phone_number;
+    public $phone_number;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $first_name;
+    public $first_name;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $city;
+    public $city;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $security_phrase;
+    public $security_phrase;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $last_local_call_time;
+    public $last_local_call_time;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $entry_date;
+    public $entry_date;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $modify_date;
+    public $modify_date;
 
     
 

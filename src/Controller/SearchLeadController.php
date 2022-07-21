@@ -18,15 +18,12 @@ class SearchLeadController extends AbstractController
      */
     public function index(): Response
     {
-
+        $data = [];
         $status = $this->getDoctrine()->getRepository(VicidialStatus::class);
-        $status = $status->findAll();
-       // dd($status);
-        $lists = [];
+        $data['status'] = $status->findAll();
 
-        return $this->render('search_lead/index.html.twig', [
-            'status' => $status,'lists' => $lists
-        ]);
+
+        return $this->render('search_lead/index.html.twig', $data);
     }
     /**
      * @Route("/searchForLead", name="searchForLead")
@@ -34,7 +31,7 @@ class SearchLeadController extends AbstractController
 
     public function searchForLead(Request $request): Response
     {
-        $daat = [];
+        $data = [];
         //dd($request->get('from'));
         $statuss = $this->getDoctrine()->getRepository(VicidialStatus::class);
         $data['status'] = $statuss->findAll();
@@ -45,11 +42,7 @@ class SearchLeadController extends AbstractController
         $data['from']=$request->get('from');
         $data['to']=$request->get('to');
         $data['lists'] = $list->getByDateAndStatus($data['from'],$data['to'],$data['leadStatus']);
-       //dd($lists);
-        //$lists = $list->findBy(['status' => $leadStatus]);
-       
-       // dd($lists);
-       
+        
         return $this->render('search_lead/index.html.twig', $data);
     }
 
