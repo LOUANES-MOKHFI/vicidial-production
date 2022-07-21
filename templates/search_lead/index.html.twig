@@ -31,23 +31,25 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="row">
-                        <div class="col-md-3">
-                            
+                        <div class="col-md-3 form-group">
+                            <label style="font-size:14px;font-weight: bold;">du : </label>
                             <input type="date" name="from" class="form-control" required {% if from is defined %} value="{{from}}" {% else %} value="{{ 'now'|date('Y-m-d') }}" {% endif %}>
-                            
                         </div>
                         <div class="col-md-3">
+                            <label style="font-size:14px;font-weight: bold;">à : </label>
                             <input type="date" name="to" class="form-control" required {% if to is defined %} value="{{to}}" {% else %} value="{{ 'now'|date('Y-m-d') }}" {% endif %} >
                         </div>
                         <div class="col-md-3">
+                            <label style="font-size:14px;font-weight: bold;">status : </label>
                             <select class="form-control" name="leadStatus" required>
-                                    <option selected value=""> Choice a Lead </option>
-                                {% for statu in status %}
-                                    <option value="{{ statu.status }}" {% if leadStatus is defined %} {% if(leadStatus == statu.status) %} selected {% endif %} {% endif %}> {{ statu.status }} </option>
-                                {% endfor %}
+                                    <option selected value=""> Choisir le status </option>
+                                    {% for statu in status %}
+                                        <option value="{{ statu.status }}" {% if leadStatus is defined %} {% if(leadStatus == statu.status) %} selected {% endif %} {% endif %}> {{ statu.status }} </option>
+                                    {% endfor %}
                             </select>
                         </div>
                         <div class="col-md-3">
+                            <br>
                             <button type="submit" class="btn btn-info">Search</button>
                         </div>
                     </div>
@@ -70,7 +72,7 @@
    <div class="row">
         <div class="col-md-12"> 
             <div class="panel">
-                {% for message in app.flashes('success') %}
+                    {% for message in app.flashes('success') %}
                         <div class="alert alert-success">
                             {{ message }}
                         </div>
@@ -81,12 +83,16 @@
                         </div>
                     {% endfor %}
                 <div class="panel-heading d-flex justify-content-between">
-                    <div class="text-left">
+                    <div class="col-md-4 text-left">
                         <h3 class="panel-title">Lead Search:<span class="text-info text-bold"> {{leadStatus}}</span></h3>
                     </div>
-                    <div class="text-right">
+                    <div class="col-md-4 text-center">
+                        <h3><a class="text-info text-bold" href="https://docs.google.com/spreadsheets/d/1KiLqTW3fqMBe0kbGMYDGBrrxL0UDhPevFlITssX8OFc/edit#gid=0">Google Sheet</a></h3>
+                    </div>
+                    <div class="col-md-4 text-right">
                         <h3 class="panel-title">Count List: <span class="text-info text-bold">{{ lists|length }}</span></h3>
                     </div>
+                    
                     
                 </div>
                 <div class="panel-body table-responsive">

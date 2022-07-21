@@ -42,7 +42,6 @@ class LeadInformationController extends AbstractController
     public function uploadFile(Request $request,$uploadDir): Response 
     {
        
-            
             //dd('http://213.246.57.137/RECORDINGS/MP3/');
             ///create google client and configure it
             $client = new \Google_Client();
@@ -184,11 +183,9 @@ class LeadInformationController extends AbstractController
                          $values = $response->getValues();
             
             ///get data from formulaire
-
+            $timezone  = +0;
+            $insertDate =  gmdate("Y-m-j H:i:s", time() + 3600*($timezone+date("I")));
             $name = $request->get('userName');
-            
-
-
             $phone = $request->get('phoneNumber');
             $user = $request->get('user');
             $leadId = $request->get('leadId');
@@ -196,8 +193,8 @@ class LeadInformationController extends AbstractController
             $lastCall = $request->get('lastCall');
             $value3 =  "https://drive.google.com/file/d/".$createdFile->id."/view"; /// file link
             
-            $update_range = "Feuille 1!A2:G2";
-            $values = [[$name, $phone,$user,$leadId,$listId,$lastCall, $value3]];
+            $update_range = "Feuille 1!A2:H2";
+            $values = [[$insertDate,$name, $phone,$user,$leadId,$listId,$lastCall, $value3]];
             $body = new \Google_Service_Sheets_ValueRange(['values' => $values]);
             $params = ['valueInputOption' => 'RAW'];
 
@@ -352,6 +349,8 @@ class LeadInformationController extends AbstractController
             //dd($recordRepo);
             $list = $listRepo->findOneBy(['lead_id' => $leadId]);
             
+            $timezone  = +0;
+            $insertDate =  gmdate("Y-m-j H:i:s", time() + 3600*($timezone+date("I")));
             $name = $list->first_name;
             $phone = $list->phone_number;
             $user = $list->user;
@@ -361,8 +360,8 @@ class LeadInformationController extends AbstractController
 
             $value3 =  "https://drive.google.com/file/d/".$createdFile->id."/view"; /// file link
             
-            $update_range = "Feuille 1!A2:G2";
-            $values = [[$name, $phone,$user,$leadId,$listId,$lastCall, $value3]];
+            $update_range = "Feuille 1!A2:H2";
+            $values = [[$insertDate,$name, $phone,$user,$leadId,$listId,$lastCall, $value3]];
             $body = new \Google_Service_Sheets_ValueRange(['values' => $values]);
             $params = ['valueInputOption' => 'RAW'];
 
