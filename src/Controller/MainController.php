@@ -21,9 +21,9 @@ class MainController extends AbstractController
      */
     public function index(AuthenticationUtils $authenticationUtils)
     {
-      /*if (!$this->getUser()) {
+      if (!$this->getUser()) {
              return $this->redirectToRoute('app_login');
-       }*/
+       }
       $error = $authenticationUtils->getLastAuthenticationError();
       // last username entered by the user
       $lastUsername = $authenticationUtils->getLastUsername();

@@ -78,7 +78,7 @@
                         </div>
                     {% endfor %}
                     {% for message in app.flashes('error') %}
-                        <div class="alert alert-errors">
+                        <div class="alert alert-danger">
                             {{ message }}
                         </div>
                     {% endfor %}
@@ -96,9 +96,12 @@
                     
                 </div>
                 <div class="panel-body table-responsive">
+                    <form method="post" action="{{path('uploadAllFile')}}">
+                        <button type="submit" class="btn btn-success">Selected Upload</button>
                     <table id="demo-dt-basic" class="table table-striped table-bordered">
                         <thead>
                             <tr>
+                                <td>#</td>
                                 <th>LEAD ID </th>
                                 <th>STATUS</th>
                                 <th class="min-tablet">VENDOR ID</th>
@@ -114,12 +117,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                           {% set leadsId = [] %}
+                           
                             {% for list in lists %}
                             
                                 <tr>
+                                    <td>
+                                        <input type="checkbox" value="{{ list.LeadId }}" name="leadids[]">
+                                    </td>
                                     <td><a class="span" href="{{path('app_lead_information',{'leadId':list.LeadId})}}">{{ list.LeadId }}</a></td>
-                                    {% set leadsId = leadsId|merge([1,2]) %}
+                                    
                                     <td>{{ list.Status }}</td>
                                     <td>{{ list.VendorLeadCode != 0 ? list.VendorLeadCode : '' }}</td>
                                     <td>{{ list.User }}</td>
@@ -134,17 +140,19 @@
                                     
                                 </tr>
                             {% endfor %}
-                            
-                            <div class="col-md-3">
-                                <form method="post" action="{{path('uploadAllFile')}}">
-                                   {% for list in lists %}
-                                   <input type="hidden" name="leadids[]" value="{{list.LeadId}}">
-                                   {% endfor %}
-                                    <button type="submit" class="btn btn-info">All Upload</button>
-                                </form>
-                            </div>
+                                
                         </tbody>
                     </table>
+                        
+                    </form>
+                    <div class="col-md-12 example-wrapper">
+                        <form method="post" action="{{path('uploadAllFile')}}">
+                           {% for list in lists %}
+                           <input type="hidden" name="leadids[]" value="{{list.LeadId}}">
+                           {% endfor %}
+                            <button type="submit" class="btn btn-info">All Upload</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

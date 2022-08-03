@@ -41,7 +41,7 @@ class RecordingLogRepository extends ServiceEntityRepository
 
     public function getByLead($lead_ids)
         {
-           //dd($lead_ids[0]);
+           
             $qb = $this->createQueryBuilder("recording_log");
             $qb->andWhere('recording_log.leadId IN (:lead_ids)')
              ->setParameter('lead_ids',$lead_ids[0]);

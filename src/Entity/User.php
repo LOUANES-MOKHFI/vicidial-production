@@ -11,7 +11,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`vicidial_users`")
- * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -20,42 +19,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private $id;
+    private $user_id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    private $email;
+    private $user;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="string")
      */
-    private $roles = [];
+    private $user_group;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
-    private $password;
+    private $pass;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $full_name;
 
     public function getId(): ?int
     {
-        return $this->id;
+        return $this->user_id;
     }
 
-    public function getEmail(): ?string
+    public function getUser(): ?string
     {
-        return $this->email;
+        return $this->user;
     }
 
-    public function setEmail(string $email): self
+    public function setUser(string $user): self
     {
-        $this->email = $email;
+        $this->user = $user;
 
         return $this;
     }
@@ -67,7 +66,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string) $this->user;
     }
 
     /**
@@ -75,24 +74,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->user;
     }
 
     /**
      * @see UserInterface
      */
-    public function getRoles(): array
+    public function getRoles(): string
     {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
+        return $this->user_group;
+       
     }
 
-    public function setRoles(array $roles): self
+    public function setRoles(string $user_group): self
     {
-        $this->roles = $roles;
+        $this->user_group = $user_group;
 
         return $this;
     }
@@ -102,12 +98,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getPassword(): string
     {
-        return $this->password;
+        return $this->pass;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(string $pass): self
     {
-        $this->password = $password;
+        $this->pass = $pass;
 
         return $this;
     }
@@ -134,12 +130,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getName(): ?string
     {
-        return $this->name;
+        return $this->full_name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $full_name): self
     {
-        $this->name = $name;
+        $this->full_name = $full_name;
 
         return $this;
     }

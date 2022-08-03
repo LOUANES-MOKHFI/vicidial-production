@@ -41,9 +41,11 @@
 {% if records is defined %}
 <div id="page-content">
    <div class="row">
-        <div class="col-md-12">
-            
-            <div class="panel">
+        <div class="col-md-12"> 
+        	<div id="loading-image" style="display: none;" class="text-center">
+                <img src="{{asset('loader.gif')}}" style="height: 400px;width: 600px;">
+            </div> 
+            <div class="panel result">
                     {% for message in app.flashes('success') %}
                         <div class="alert alert-success">
                             {{ message }}
@@ -60,7 +62,7 @@
                     </h3>
                 </div>
                 <div class="panel-body table-responsive">
-                    <table id="demo-dt-basic" class="table table-striped table-bordered">
+                    <table id="demo-dt-basic" class="table table-striped table-bordered" >
                         <thead>
                             <tr>
                                 <th class="min-desktop">LEAD </th>
@@ -92,16 +94,16 @@
                                     </audio>
                                 </td>
                                 <td>
-                                    <form method="post" action="{{path('uploadFile')}}">
+                                    <form id="uploadeFile">
                                         <input type="hidden" name="token" value="{{ csrf_token('upload') }}" />
-                                        <input type="hidden" name="leadId" value="{{ list.LeadId }}">
-                                        <input type="hidden" name="listId" value="{{ list.ListId }}">
-                                        <input type="hidden" name="user" value="{{ list.User }}">
-                                        <input type="hidden" name="lastCall" value="{{ list.LastLocalCallTime }}">
-                                        <input type="hidden" name="userName" value="{{ list.FirstName }}">
-                                        <input type="hidden" name="phoneNumber" value="{{ list.PhoneNumber }}">
-                                        <input type="hidden" name="file" value="{{ record.Location }}">
-                                        <input type="hidden" name="filename" value="{{ record.Filename }}">
+                                        <input type="hidden" name="leadId" id="leadId" value="{{ list.LeadId }}">
+                                        <input type="hidden" name="listId" id="listId" value="{{ list.ListId }}">
+                                        <input type="hidden" name="user" id="user" value="{{ list.User }}">
+                                        <input type="hidden" name="lastCall" id="lastCall" value="{{ list.LastLocalCallTime }}">
+                                        <input type="hidden" name="userName" id="userName" value="{{ list.FirstName }}">
+                                        <input type="hidden" name="phoneNumber" id="phoneNumber" value="{{ list.PhoneNumber }}">
+                                        <input type="hidden" name="file" id="file" value="{{ record.Location }}">
+                                        <input type="hidden" name="filename" id="filename" value="{{ record.Filename }}">
                                         <button class="btn btn-primary" type="submit">Uploade</button>
                                     </form>
                                 </td>
@@ -115,12 +117,64 @@
     </div>
 </div>
 {% endif %}
-<script src="{{asset('assets/admin/js/jquery-2.1.1.min.js')}}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="{{asset('assets/admin/plugins/datatables/media/js/jquery.dataTables.js')}}"></script>
 <script src="{{asset('assets/admin/plugins/datatables/media/js/dataTables.bootstrap.js')}}"></script>
 <script src="{{asset('assets/admin/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js')}}"></script>
  <script src="{{asset('assets/admin/js/demo/tables-datatables.js')}}"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $('#uploadeFile').on('submit',function(e){
+      
 
+        e.preventDefault();
+        let leadId = $('#leadId').val();
+        
+        let listId = $('#listId').val();
+        let user = $('#user').val();
+        let lastCall = $('#lastCall').val();
+        let userName = $('#userName').val();
+        let phoneNumber = $('#phoneNumber').val();
+        let file = $('#file').val();
+        let filename = $('#filename').val();
+        //alert(from);
+        $('#loading-image').show();
+        $('.result').hide();
+        $.ajax({
+                url: '{{ path('uploadFile') }}',
+                type: "POST",
+                data:{
+                   // "_token":token,
+                    leadId:leadId,
+                    listId:listId,
+                    user:user,
+                    lastCall:lastCall,
+                    userName:userName,
+                    phoneNumber:phoneNumber,
+                    file:file,
+                    filename:filename,
+                },
+                success:function(response)
+                {
+                  
+                    
+                },
+                complete: function(){
+                    $('#loading-image').hide();
+                    Swal.fire({
+					  position: 'center',
+					  icon: 'success',
+					  title: 'Les fichiers sont uploader avec succees',
+					  showConfirmButton: false,
+					  timer: 5000
+					});
+                    $('.result').show();
+                }
+            });
+    });
+
+    
+</script>
 {% endblock %}
 
 {% block script %}

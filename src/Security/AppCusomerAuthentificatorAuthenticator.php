@@ -22,14 +22,16 @@ class AppCusomerAuthentificatorAuthenticator extends AbstractLoginFormAuthentica
     public const LOGIN_ROUTE = 'app_login';
 
     private $urlGenerator;
-
+    
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
+
         $this->urlGenerator = $urlGenerator;
     }
 
     public function authenticate(Request $request): Passport
     {
+
         $email = $request->request->get('email', '');
 
         $request->getSession()->set(Security::LAST_USERNAME, $email);
@@ -58,4 +60,5 @@ class AppCusomerAuthentificatorAuthenticator extends AbstractLoginFormAuthentica
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);
     }
+     
 }

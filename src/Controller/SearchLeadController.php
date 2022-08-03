@@ -23,7 +23,7 @@ class SearchLeadController extends AbstractController
         $data['status'] = $status->findAll();
 
 
-        return $this->render('search_lead/index.html.twig', $data);
+        return $this->render('search_lead/index1.html.twig', $data);
     }
     /**
      * @Route("/searchForLead", name="searchForLead")
@@ -43,7 +43,12 @@ class SearchLeadController extends AbstractController
         $data['to']=$request->get('to');
         $data['lists'] = $list->getByDateAndStatus($data['from'],$data['to'],$data['leadStatus']);
         
-        return $this->render('search_lead/index.html.twig', $data);
+        $data['etat'] = 200;
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+        //return $this->render('search_lead/index.html.twig', $data);
     }
 
 }

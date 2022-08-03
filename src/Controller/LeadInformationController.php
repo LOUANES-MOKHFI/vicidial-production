@@ -31,7 +31,7 @@ class LeadInformationController extends AbstractController
         //dd($recordRepo);
         $list = $listRepo->findOneBy(['lead_id' => $leadId]);
 
-        return $this->render('/lead_information/index.html.twig', [
+        return $this->render('/lead_information/index1.html.twig', [
             'records' => $records,'list' => $list,
         ]);
     }
@@ -41,7 +41,7 @@ class LeadInformationController extends AbstractController
      */
     public function uploadFile(Request $request,$uploadDir): Response 
     {
-       
+            
             //dd('http://213.246.57.137/RECORDINGS/MP3/');
             ///create google client and configure it
             $client = new \Google_Client();
@@ -57,7 +57,6 @@ class LeadInformationController extends AbstractController
            //$file->move($uploadDir,$filename);
            $target_file = 'http://213.246.57.137/RECORDINGS/MP3/'.$filename; 
            //dd($target_file);
-           //dd($target_file);
            try{
                 $data = file_get_contents($target_file);
            } catch (Exception $e) {
@@ -72,12 +71,18 @@ class LeadInformationController extends AbstractController
             }
            $mime_type = 'audio/mpeg';  /// file mime (format de fichier)
 
-
+            //verify if file exist in drive and sheet
+            $exist = $this->existFile($service,$filename);
+            //dd($exist);
             //// call the insertfile function
-            $response = $this->insertFile($service, 'Test ', 'test 1', null, $filename, $mime_type, $data, $request);
-            //dd($response);
-
-            /// return response to front
+            if(!$exist){
+                $response = $this->insertFile($service, 'Test ', 'test 1', null, $filename, $mime_type, $data, $request);
+                //dd($response);
+            }
+            else{
+                $response = 'file exist';
+            }
+                /// return response to front
             if($response === NULL) {
 
                 $this->addFlash(
@@ -92,17 +97,47 @@ class LeadInformationController extends AbstractController
         
                  $this->addFlash(
                     'error',
-                    'erreur de serveur, veuillez ressayez plus tard'
+                    'erreur de serveur ou le fichier exist dans Drive'
                 );
                 $route = $request->headers->get('referer');
 
                 return $this->redirect($route);
 
             }
+        
          
         
     }
+    function existFile($service,$filename){
+       
+        $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
 
+        $client = new \Google_Client();
+        $client->setApplicationName('Google Sheets and PHP');
+        $client->setScopes([\Google_Service_Sheets::SPREADSHEETS]);
+        $client->setAccessType('offline');
+        $client->setRedirectUri($redirect_uri);
+        //$client->setScopes('https://www.googleapis.com/auth/drive.metadata.readonly');
+        $client->setAuthConfig(__DIR__ . '/credentials.json');
+        $client->setPrompt('select_account consent');
+        $authUrl = $client->createAuthUrl();
+        $service = new \Google_Service_Sheets($client);
+            
+            //// id file sheet
+        $spreadsheetId = "1KiLqTW3fqMBe0kbGMYDGBrrxL0UDhPevFlITssX8OFc"; //It is present in your URL
+
+        $get_range = "Feuille 1"; /// first range
+        //dd($service->spreadsheets_values);
+        $response = $service->spreadsheets_values->get($spreadsheetId,$get_range);
+        $values = $response->getValues();
+
+        foreach ($values as $key => $value) {
+            if($value[8] == $filename){
+                return true;
+            }
+        }
+
+    }
     ///insert file function
     function insertFile($service, $title, $description, $parentId, $filename, $mimeType, $data, $request) {
 
@@ -151,7 +186,7 @@ class LeadInformationController extends AbstractController
         // $service->permissions->create($fileId, $ownerPermission, ['emailMessage' => 'You add a file to :SheetVicidial']);
 
          /// call insert data in sheet function
-          $this->insertData($createdFile, $request);
+          $this->insertData($createdFile, $request,$filename);
       
         } catch (Exception $e) {
           print "An error occurred: " . $e->getMessage();
@@ -159,7 +194,7 @@ class LeadInformationController extends AbstractController
     }
 
     ///// insert data in sheet function
-    function insertData($createdFile, $request) {
+    function insertData($createdFile, $request,$filename) {
         $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
         $client = new \Google_Client();
         $client->setApplicationName('Google Sheets and PHP');
@@ -194,7 +229,7 @@ class LeadInformationController extends AbstractController
             $value3 =  "https://drive.google.com/file/d/".$createdFile->id."/view"; /// file link
             
             $update_range = "Feuille 1!A2:H2";
-            $values = [[$insertDate,$name, $phone,$user,$leadId,$listId,$lastCall, $value3]];
+            $values = [[$insertDate,$name, $phone,$user,$leadId,$listId,$lastCall, $value3,$filename]];
             $body = new \Google_Service_Sheets_ValueRange(['values' => $values]);
             $params = ['valueInputOption' => 'RAW'];
 
@@ -209,14 +244,13 @@ class LeadInformationController extends AbstractController
     /**
      * @Route("/uploadAllFile", name="uploadAllFile")
      */
-    public function uploader(Request $request) : Response
+    public function uploadAllFile(Request $request) : Response
     {
-        //dd($request->get('leadids'));
+        $leadids = explode(',', $request->get('leadids'));
+       // dd($leadids);
         $recordRepo = $this->getDoctrine()->getRepository(RecordingLog::class);
-        $records = $recordRepo->getByLead([$request->get('leadids')]);
-       
+        $records = $recordRepo->getByLead([$leadids]);
             foreach($records as $record){
-                //dd($record->filename);
                 $leadId = $record->leadId;
                 ///create google client and configure it
                 $client = new \Google_Client();
@@ -231,37 +265,49 @@ class LeadInformationController extends AbstractController
                 //// move file to directory
                 //$file->move($uploadDir,$filename);
                 $target_file = 'http://213.246.57.137/RECORDINGS/MP3/'.$filename; 
-                //dd($target_file);
                 $data = file_get_contents($target_file);
                 $mime_type = 'audio/mpeg';  /// file mime (format de fichier)
 
                 // https://developers.google.com/drive/v2/reference/files/insert#examples
+                $exist = $this->existFile($service,$filename);
 
+                if(!$exist){
                 //// call the insertfile function
-                $response = $this->insertAllFile($service, 'Test ', 'test 1', null, $filename, $mime_type, $data, $leadId);
-                //dd($response);
-                ///endforeach
-        }
+                    $response = $this->insertAllFile($service, 'Test ', 'test 1', null, $filename, $mime_type, $data, $leadId);
+                }else{
+                    $response = 'file exist';
+                }
+            }
         /// return response to front
         if($response === NULL) {
+                $data['etat'] = 200;
+                $data['message'] = 'Les fichiers sont insérées avec success';
+                $response = new Response(json_encode($data));
+                $response->headers->set('Content-Type', 'application/json');
 
-            $this->addFlash(
+                return $response;
+            /*$this->addFlash(
                 'success',
-                'Les fichiers est insérer avec success'
+                'Les fichiers sont insérées avec success'
             );
 
             $route = $request->headers->get('referer');
 
-                return $this->redirect($route);
+                return $this->redirect($route);*/
         } else {
-    
-             $this->addFlash(
+            $data['etat'] = 500;
+            $data['message'] = 'erreur de serveur ou le fichier exist dans Drive';
+            $response = new Response(json_encode($data));
+            $response->headers->set('Content-Type', 'application/json');
+
+            return $response;
+            /* $this->addFlash(
                 'error',
-                'erreur de serveur, veuillez ressayez plus tard'
+                'erreur de serveur ou le fichier exist dans Drive'
             );
             $route = $request->headers->get('referer');
 
-            return $this->redirect($route);
+            return $this->redirect($route);*/
 
         }
     }
@@ -313,7 +359,7 @@ class LeadInformationController extends AbstractController
           //$service->permissions->create($fileId, $ownerPermission, ['emailMessage' => 'You add a file to :SheetVicidial']);
 
          /// call insert data in sheet function
-          $this->insertAllData($createdFile, $leadId);
+          $this->insertAllData($createdFile, $leadId,$filename);
       
         } catch (Exception $e) {
           print "An error occurred: " . $e->getMessage();
@@ -321,7 +367,7 @@ class LeadInformationController extends AbstractController
     }
 
     ///// insert data in sheet function
-    function insertAllData($createdFile, $leadId) {
+    function insertAllData($createdFile, $leadId,$filename) {
         $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
         $client = new \Google_Client();
         $client->setApplicationName('Google Sheets and PHP');
@@ -359,9 +405,8 @@ class LeadInformationController extends AbstractController
             $lastCall = $list->last_local_call_time;
 
             $value3 =  "https://drive.google.com/file/d/".$createdFile->id."/view"; /// file link
-            
             $update_range = "Feuille 1!A2:H2";
-            $values = [[$insertDate,$name, $phone,$user,$leadId,$listId,$lastCall, $value3]];
+            $values = [[$insertDate,$name, $phone,$user,$leadId,$listId,$lastCall, $value3, $filename]];
             $body = new \Google_Service_Sheets_ValueRange(['values' => $values]);
             $params = ['valueInputOption' => 'RAW'];
 
